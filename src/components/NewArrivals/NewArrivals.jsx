@@ -1,35 +1,51 @@
+import { useContext } from 'react'
 import { useState, useEffect } from 'react'
 import { Title } from '../index'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import 'swiper/css'
 import { Autoplay } from 'swiper/modules'
-import { products } from '../../assets/images/data'
 import { Item } from '../index'
+import { ShopContext } from '../../context/ShopContext'
 
 const NewArrivals = () => {
+
+  const { products } = useContext(ShopContext);
 
   const [popularProducts, setPopularProducts] = useState([]);
 
   useEffect(() => {
-    const data = products.slice(0, 7);
+    const data = products.slice(0, 12);
     setPopularProducts(data);
-    console.log(data);
+    // console.log(data);
   }, [products]);
 
   return (
-    <section>
+    <section className='max-padd-container pt-16'>
       <Title title1={"New"} title2={"Arrivals"} titleStyles={"pb-10"} paraStyles={"!block"} />
 
       <Swiper
         modules={[Autoplay]}
         spaceBetween={30}
-        centeredSlides={true}
         slidesPerView={1}
-        loop={true}
+        loop={popularProducts.length > 10}
         pagination={{ clickable: true }}
         autoplay={{
-          delay: 4000,
+          delay: 3000,
           disableOnInteraction: false,
+          pauseOnMouseEnter: true,
+        }}
+        onSwiper={(swiper) => {
+          if (swiper.autoplay) {
+            swiper.autoplay.stop();
+          }
+
+          setTimeout(() => {
+            swiper.slideNext();
+
+            if (swiper.autoplay) {
+              swiper.autoplay.start();
+            }
+          }, 1000);
         }}
         breakpoints={{
           300:{
@@ -55,8 +71,6 @@ const NewArrivals = () => {
           ))
         }
       </Swiper>
-
-
     </section>
   )
 }
